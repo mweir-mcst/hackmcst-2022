@@ -1,0 +1,119 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "levels/mainLevel.tmx",
+    "expandedProjectPaths": [
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "": {
+            "scaleInDock": 1,
+            "scaleInEditor": 0.5
+        },
+        "levels/mainLevel (copy).tmx": {
+            "scale": 0.10073958333333334,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 2407.1967738599938,
+                "y": 4069.8997001344223
+            }
+        },
+        "levels/mainLevel (copy).tmx#backgroundGirder": {
+            "scaleInDock": 1
+        },
+        "levels/mainLevel (copy).tmx#spikeDown": {
+            "scaleInDock": 1
+        },
+        "levels/mainLevel (copy).tmx#spikeLeft": {
+            "scaleInDock": 1
+        },
+        "levels/mainLevel (copy).tmx#spikeUp": {
+            "scaleInDock": 1
+        },
+        "levels/mainLevel (copy).tmx#tileset": {
+            "scaleInDock": 1
+        },
+        "levels/mainLevel.tmx": {
+            "scale": 0.25,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 2686,
+                "y": 3956
+            }
+        },
+        "levels/mainLevel.tmx#backgroundGirder": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "levels/mainLevel.tmx#fullTileSetDraft3": {
+            "scaleInEditor": 1
+        },
+        "levels/mainLevel.tmx#fullTileset": {
+            "scaleInDock": 0.5,
+            "scaleInEditor": 1
+        },
+        "levels/mainLevel.tmx#fullTilesetDraft1": {
+            "dynamicWrapping": false,
+            "scaleInEditor": 1
+        },
+        "levels/mainLevel.tmx#fullTilesetDraft2": {
+            "scaleInEditor": 1
+        },
+        "levels/mainLevel.tmx#spikeDown": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "levels/mainLevel.tmx#spikeLeft": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "levels/mainLevel.tmx#spikeUp": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "levels/mainLevel.tmx#tileset": {
+            "dynamicWrapping": true,
+            "scaleInEditor": 1
+        },
+        "tilesets/rustedGround.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 0.33,
+            "scaleInEditor": 1
+        },
+        "tilesets/spikeRight.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        }
+    },
+    "last.exportedFilePath": "/home/mattx8y/LoveProjects/hackmcst-2022/levels",
+    "last.externalTilesetPath": "/home/mattx8y/LoveProjects/hackmcst-2022/tilesets",
+    "last.imagePath": "/home/mattx8y/LoveProjects/hackmcst-2022/art",
+    "map.lastUsedExportFilter": "Lua files (*.lua)",
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 48,
+    "map.tileWidth": 48,
+    "openFiles": [
+        "levels/mainLevel.tmx"
+    ],
+    "project": "hackmcst-2022.tiled-project",
+    "property.type": "string",
+    "recentFiles": [
+        "levels/mainLevel.tmx",
+        "levels/mainLevel (copy).tmx",
+        "tilesets/rustedGround.tsx",
+        "tilesets/spikeRight.tsx"
+    ],
+    "tileset.embedInMap": true,
+    "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 48,
+        "width": 48
+    },
+    "tileset.transparentColor": "#fdfdfd",
+    "tileset.type": 0,
+    "tileset.useTransparentColor": false
+}
