@@ -1,15 +1,18 @@
 local sti = require "sti"
 
 GRAVITY = 30
+DEBUG = false
+BIsDown = false
+
+Contacts = {}
 
 function Die()
   Player.body:setPosition(Player.respawnX, Player.respawnY)
 end
 
 function IsTouchingGround()
-  for _, contact in pairs(Player.body:getContacts()) do
-    local x1, y1 = contact:getPositions()
-    if contact:isTouching() and y1 >= Player.body:getY() + 24 then
+  for _, contact in pairs(Contacts) do
+    if contact.x == Player.body:getX() and contact.y > Player.body:getY() then
       return true
     end
   end
@@ -95,11 +98,22 @@ function love.load()
   }
 
   local spritesLayer = Map.layers["Sprites"]
+  local dangerLayer = Map.layers["Danger"]
   spritesLayer.sprites = {
     player = Player
   }
 
   function spritesLayer:update(dt)
+    Contacts = {}
+    for _, contact in pairs(Player.body:getContacts()) do
+      local x1, y1 = contact:getPositions()
+      if x1 ~= nil and y1 ~= nil then
+        table.insert(Contacts, {x = x1, y = y1})
+      end
+    end
+    if Player.body:getY() > 5000 then
+      Die()
+    end
     if love.keyboard.isDown("space") then
       Player.spaceMode = true
       Player.body:setGravityScale(0)
@@ -107,18 +121,6 @@ function love.load()
       Player.spaceMode = false
       Player.body:setGravityScale(1)
       HandlePlayerMovement(dt)
-    end
-    if Player.body:getY() > 5000 then
-      Die()
-    end
-    local tileX, tileY = Map:convertPixelToTile(Player.body:getX(), Player.body:getY())
-    local dangerLayer = Map.layers["Danger"]
-    for i in pairs(dangerLayer.data) do
-      for j in pairs(dangerLayer.data[i]) do
-        if math.floor(tileX) + 1 == j and math.floor(tileY) + 1 == i then
-          Die()
-        end
-      end
     end
   end
 
@@ -132,11 +134,33 @@ function love.load()
     else
       love.graphics.draw(Player.imageYellowR, Player.body:getX() - 24, Player.body:getY() - 24)
     end
+    if DEBUG then
+      love.graphics.setColor(0, 0, 1)
+      love.graphics.circle("line", Player.body:getX(), Player.body:getY(), 24)
+      for _, contact in pairs(Contacts) do
+        love.graphics.circle("fill", contact.x, contact.y, 5)
+      end
+    end
+  end
+
+  local dangerDraw = dangerLayer.draw
+
+  function dangerLayer:draw()
+    dangerDraw(dangerLayer)
+    if DEBUG then
+      love.graphics.setColor(1, 0, 0)
+      for y in pairs(dangerLayer.data) do
+        for x in pairs(dangerLayer.data[y]) do
+          local drawX, drawY = Map:convertTileToPixel(x - 1, y - 1)
+          love.graphics.rectangle("line", drawX, drawY, 48, 48)
+        end
+      end
+    end
   end
 
   Player.body = love.physics.newBody(World, Player.respawnX, Player.respawnY, "dynamic")
   Player.body:setFixedRotation(true)
-  Player.shape = love.physics.newRectangleShape(48, 48)
+  Player.shape = love.physics.newCircleShape(24)
   Player.fixture = love.physics.newFixture(Player.body, Player.shape)
   Player.fixture:setCategory(2)
   Player.imageYellowL = love.graphics.newImage("art/YellowBoyL.png")
@@ -146,6 +170,17 @@ function love.load()
 end
 
 function love.update(dt)
+  if love.keyboard.isDown("escape") then
+    love.event.quit()
+  end
+
+  if love.keyboard.isDown("b") and not BIsDown then
+    BIsDown = true
+    DEBUG = not DEBUG
+  elseif not love.keyboard.isDown("b") then
+    BIsDown = false
+  end
+
   World:update(dt)
   Map:update(dt)
 end
@@ -155,4 +190,8 @@ function love.draw()
   --love.graphics.print("Position: (" .. Player.body:getX() .. ", " .. Player.body:getY() .. ")", 10, 10)
   --love.graphics.print("Velocity: (" .. Player.xVel .. ", " .. Player.yVel .. ")", 10, 25)
   Map:draw(250 - Player.body:getX(), love.graphics.getHeight() - 300 - Player.body:getY())
+  if DEBUG then
+    love.graphics.setColor(0, 1, 0)
+    Map:box2d_draw(250 - Player.body:getX(), love.graphics.getHeight() - 300 - Player.body:getY())
+  end
 end
