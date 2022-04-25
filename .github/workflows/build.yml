@@ -18,8 +18,8 @@ jobs:
         cache: 'npm'
     - name: Build GitHub Pages
       run: |
-        npm install -g love.js
-        love.js -c . web
+        npm install --no-save love.js
+        npx love.js -c . web
         cd web
         git init
         git remote add origin https://github.com/mweir-mcst/hackmcst-2022.git
