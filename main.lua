@@ -4,14 +4,31 @@ GRAVITY = 30
 DEBUG = false
 BIsDown = false
 
-Contacts = {}
-
 function Die()
   Player.body:setPosition(Player.respawnX, Player.respawnY)
 end
 
+function FloorCoords(x, y)
+  return math.floor(x), math.floor(y)
+end
+
+function GetTouchingTile(contact)
+  local tileX, tileY = FloorCoords(Map:convertPixelToTile(contact.x, contact.y))
+  if contact.x < Player.body:getX() then
+    tileX = tileX - 1
+  elseif contact.x > Player.body:getX() then
+    tileX = tileX + 1
+  end
+  if contact.y < Player.body:getY() then
+    tileY = tileY - 1
+  elseif contact.y > Player.body:getY() then
+    tileY = tileY + 1
+  end
+  return tileX, tileY
+end
+
 function IsTouchingGround()
-  for _, contact in pairs(Contacts) do
+  for _, contact in pairs(Player.contacts) do
     if contact.x == Player.body:getX() and contact.y > Player.body:getY() then
       return true
     end
@@ -94,7 +111,8 @@ function love.load()
     isJumping = false,
     direction = "right",
     respawnX = 250,
-    respawnY = 4630
+    respawnY = 4630,
+    contacts = {}
   }
 
   local spritesLayer = Map.layers["Sprites"]
@@ -104,11 +122,19 @@ function love.load()
   }
 
   function spritesLayer:update(dt)
-    Contacts = {}
+    Player.contacts = {}
     for _, contact in pairs(Player.body:getContacts()) do
       local x1, y1 = contact:getPositions()
       if x1 ~= nil and y1 ~= nil then
-        table.insert(Contacts, {x = x1, y = y1})
+        table.insert(Player.contacts, {x = x1, y = y1})
+        local tileX, tileY = GetTouchingTile({x = x1, y = y1})
+        for y in pairs(dangerLayer.data) do
+          for x in pairs(dangerLayer.data[y]) do
+            if x == tileX + 1 and y == tileY + 1 then
+              Die()
+            end
+          end
+        end
       end
     end
     if Player.body:getY() > 5000 then
@@ -137,8 +163,12 @@ function love.load()
     if DEBUG then
       love.graphics.setColor(0, 0, 1)
       love.graphics.circle("line", Player.body:getX(), Player.body:getY(), 24)
-      for _, contact in pairs(Contacts) do
+      for _, contact in pairs(Player.contacts) do
         love.graphics.circle("fill", contact.x, contact.y, 5)
+        local tileX, tileY = GetTouchingTile(contact)
+        local drawX, drawY = Map:convertTileToPixel(tileX, tileY)
+        love.graphics.setColor(0, 0, 1)
+        love.graphics.rectangle("fill", drawX, drawY, 48, 48)
       end
     end
   end
@@ -147,15 +177,6 @@ function love.load()
 
   function dangerLayer:draw()
     dangerDraw(dangerLayer)
-    if DEBUG then
-      love.graphics.setColor(1, 0, 0)
-      for y in pairs(dangerLayer.data) do
-        for x in pairs(dangerLayer.data[y]) do
-          local drawX, drawY = Map:convertTileToPixel(x - 1, y - 1)
-          love.graphics.rectangle("line", drawX, drawY, 48, 48)
-        end
-      end
-    end
   end
 
   Player.body = love.physics.newBody(World, Player.respawnX, Player.respawnY, "dynamic")
@@ -187,11 +208,12 @@ end
 
 function love.draw()
   love.graphics.setColor(1, 1, 1)
-  --love.graphics.print("Position: (" .. Player.body:getX() .. ", " .. Player.body:getY() .. ")", 10, 10)
-  --love.graphics.print("Velocity: (" .. Player.xVel .. ", " .. Player.yVel .. ")", 10, 25)
   Map:draw(250 - Player.body:getX(), love.graphics.getHeight() - 300 - Player.body:getY())
   if DEBUG then
     love.graphics.setColor(0, 1, 0)
     Map:box2d_draw(250 - Player.body:getX(), love.graphics.getHeight() - 300 - Player.body:getY())
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.print("Position: (" .. Player.body:getX() .. ", " .. Player.body:getY() .. ")", 10, 10)
+    love.graphics.print("Velocity: (" .. Player.xVel .. ", " .. Player.yVel .. ")", 10, 25)
   end
 end
