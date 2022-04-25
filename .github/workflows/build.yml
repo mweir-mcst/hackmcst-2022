@@ -18,7 +18,7 @@ jobs:
     - name: Build GitHub Pages
       run: |
         npm install --no-save love.js
-        npx love.js -c . web
+        npx love.js -c -t hackmcst-2022 . web
         cd web
         git init
         git remote add origin https://github.com/mweir-mcst/hackmcst-2022.git
