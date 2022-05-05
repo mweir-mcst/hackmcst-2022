@@ -41,7 +41,7 @@ function HandlePlayerMovement(dt)
   Player.xVel = Player.xVel / 48
   Player.yVel = Player.yVel / 48
 
-  if (love.keyboard.isDown("up") or love.keyboard.isDown("w")) and (Player.isJumping or IsTouchingGround()) then
+  if (love.keyboard.isDown("up") or love.keyboard.isDown("w") or JoystickJump) and (Player.isJumping or IsTouchingGround()) then
     if Player.canJump then
       Player.canJump = false
       Player.isJumping = true
@@ -55,7 +55,7 @@ function HandlePlayerMovement(dt)
     Player.isJumping = false
   end
 
-  if love.keyboard.isDown("left") or love.keyboard.isDown("a") then
+  if love.keyboard.isDown("left") or love.keyboard.isDown("a") or JoystickLeft then
     Player.direction = "left"
     if Player.xVel > Player.speed / 2 then
       Player.xVel = Player.speed / 2
@@ -66,7 +66,7 @@ function HandlePlayerMovement(dt)
         Player.xVel = -Player.speed
       end
     end
-  elseif love.keyboard.isDown("right") or love.keyboard.isDown("d") then
+  elseif love.keyboard.isDown("right") or love.keyboard.isDown("d") or JoystickRight then
     Player.direction = "right"
     if Player.xVel < -Player.speed / 2 then
       Player.xVel = -Player.speed / 2
@@ -93,7 +93,6 @@ function HandlePlayerMovement(dt)
 end
 
 function love.load()
-  love.window.setFullscreen(true)
   love.physics.setMeter(48)
   World = love.physics.newWorld(0, GRAVITY * 48, true)
   Map = sti("levels/mainLevelLuaDraft4Final.lua", {"box2d"})
@@ -140,7 +139,7 @@ function love.load()
     if Player.body:getY() > 5000 then
       Die()
     end
-    if love.keyboard.isDown("space") then
+    if love.keyboard.isDown("space") or JoystickSpace then
       Player.spaceMode = true
       Player.body:setGravityScale(0)
     else
@@ -191,6 +190,25 @@ function love.load()
 end
 
 function love.update(dt)
+  JoystickLeft = false
+  JoystickRight = false
+  JoystickJump = false
+  JoystickSpace = false
+
+  for i, joystick in pairs(love.joystick.getJoysticks()) do
+    if joystick:isGamepadDown("dpleft") or joystick:getGamepadAxis("leftx") < -0.2 or joystick:getGamepadAxis("rightx") < -0.2 then
+      JoystickLeft = true
+    elseif joystick:isGamepadDown("dpright") or joystick:getGamepadAxis("leftx") > 0.2 or joystick:getGamepadAxis("rightx") > 0.2 then
+      JoystickRight = true
+    end
+    if joystick:isGamepadDown("b") or joystick:isGamepadDown("a") then
+      JoystickJump = true
+    end
+    if joystick:getGamepadAxis("triggerleft") > 0.2 or joystick:getGamepadAxis("triggerright") > 0.1 or joystick:isGamepadDown("leftshoulder") or joystick:isGamepadDown("rightshoulder") then
+      JoystickSpace = true
+    end
+  end
+
   if love.keyboard.isDown("escape") then
     love.event.quit()
   end
@@ -215,5 +233,9 @@ function love.draw()
     love.graphics.setColor(1, 1, 1)
     love.graphics.print("Position: (" .. Player.body:getX() .. ", " .. Player.body:getY() .. ")", 10, 10)
     love.graphics.print("Velocity: (" .. Player.xVel .. ", " .. Player.yVel .. ")", 10, 25)
+    love.graphics.print("Connected Controllers: ", 10, 40)
+    for i, joystick in pairs(love.joystick.getJoysticks()) do
+        love.graphics.print(joystick:getName() .. " (" .. joystick:getGamepadAxis("triggerleft") .. " " .. joystick:getGamepadAxis("triggerright") .. ")", 20, 40 + i * 15)
+    end
   end
 end
